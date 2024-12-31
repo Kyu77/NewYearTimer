@@ -67,32 +67,17 @@
     setTimeout(function() {
         alertBox.style.opacity = '0'; // Fade out the alert
         alertBox.style.visibility = 'hidden';
-    }, 15000); // Alert stays for 10 seconds
+    }, 15000); // Alert stays for 15 seconds
 }
 
-// Function to show the alert at a random time every hour
-function showAlertAtRandomTime() {
-    var currentMinute = new Date().getMinutes();
-    var randomMinute = Math.floor(Math.random() * 60); // Get a random minute between 0 and 59
-    
-    // Set a random time within the next hour
-    var timeUntilAlert = (randomMinute - currentMinute) * 60000; // Time difference in milliseconds
-
-    // If the random time is negative (i.e. we've passed the random minute), add 60 minutes
-    if (timeUntilAlert < 0) {
-        timeUntilAlert += 3600000; // 60 minutes in milliseconds
-    }
-
-    setTimeout(function() {
-        showAlert();
-    }, timeUntilAlert);
-}
-
-// Set an interval to check every hour (once the alert is shown)
-setInterval(showAlertAtRandomTime, 3600000);
-
-// Initial call to trigger the first alert at a random time within the next hour
-showAlertAtRandomTime();
+function checkForAlertTime() {
+            var now = new Date();
+            if (now.getMinutes() === 25 && now.getSeconds() === 0) {
+                showAlert();
+            }
+        }
+        // Vérification chaque seconde
+        setInterval(checkForAlertTime, 1000);
 </script>
 </body>
 </html>
