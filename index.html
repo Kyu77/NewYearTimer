@@ -7,8 +7,8 @@
     <title>TIMER NOUVEL AN</title>
 </head>
 <body>
-    <h1>30 ans</h1>
-    <p>Anniversaire Angélique</p>
+    <h1>Nouvel An </h1>
+    <p>2026</p>
     <div class="container">
         <div class="bx">
             <div id="day" class="counter"></div>
@@ -29,9 +29,11 @@
         SHOT  !
     </div>
 
+    <audio id="lmfaoSound" src="./LMFAO   Shots Clip.mp3" preload="auto"></audio>
+
     <script>
-        
-        var targetDate = new Date('Feb 23, 2025 01:00 :00').getTime();
+
+        var targetDate = new Date('Jan 1, 2026 01:00 :00').getTime();
 
         function newYear(){
             var current= new Date().getTime();
@@ -51,31 +53,90 @@
             document.getElementById('hour').innerText = h;
             document.getElementById('minute').innerText = m;
             document.getElementById('second').innerText = s;
-        } 
-        
+        }
+
         setInterval(function(){
             newYear();
         }, 1000)
- 
+
     function showAlert() {
     var alertBox = document.getElementById('alertBox');
     alertBox.style.display = 'flex'; // Show the alert box
     alertBox.style.opacity = '1';
     alertBox.style.visibility = 'visible';
 
+    // Play sound
+    playMusic();
+
     // Hide the alert after 10 seconds
     setTimeout(function() {
         alertBox.style.opacity = '0'; // Fade out the alert
         alertBox.style.visibility = 'hidden';
-    }, 15000); // Alert stays for 15 seconds
+    }, 10000); // Alert stays for 15 seconds
 }
 
-function checkForAlertTime() {
-            var now = new Date();
-            if (now.getMinutes() === 25 && now.getSeconds() === 0) {
-                showAlert();
-            }
+function playMusic() {
+    const lmfaoSound = document.getElementById('lmfaoSound');
+    lmfaoSound.currentTime = 0; // Reset to start
+    lmfaoSound.loop = true; // Loop the sound
+    lmfaoSound.play().catch(e => {
+        console.error('Error playing LMFAO sound:', e);
+        // Fallback to synthetic sound if audio fails
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.setValueAtTime(1000, audioContext.currentTime); // Start high
+        oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 10); // Extend to 10 seconds
+
+        oscillator.type = 'sawtooth'; // Harsh sound like a shout
+
+        gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 10); // Fade out over 10 seconds
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 10); // Duration 10 seconds
+    });
+
+    // Stop the sound after 10 seconds
+    setTimeout(() => {
+        lmfaoSound.pause();
+        lmfaoSound.currentTime = 0;
+        lmfaoSound.loop = false;
+    }, 10000);
+}
+
+let alertMinutes = [];
+
+function generateRandomMinutes() {
+    alertMinutes = [];
+    while (alertMinutes.length < 2) {
+        let min = Math.floor(Math.random() * 60);
+        if (!alertMinutes.includes(min)) {
+            alertMinutes.push(min);
         }
+    }
+}
+
+generateRandomMinutes(); // Initial generation
+
+function checkForAlertTime() {
+    var now = new Date();
+    if (now.getMinutes() === 0 && now.getSeconds() === 0) {
+        generateRandomMinutes(); // Regenerate at start of hour
+    }
+    // Original logic: trigger 2 times per hour at random minutes
+    if (alertMinutes.includes(now.getMinutes()) && now.getSeconds() === 0) {
+        showAlert();
+    }
+    // For testing: trigger every 30 seconds
+    // if (now.getSeconds() % 30 === 0) {
+    //     showAlert();
+    // }
+}
         // Vérification chaque seconde
         setInterval(checkForAlertTime, 1000);
 </script>
